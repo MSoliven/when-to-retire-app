@@ -28,22 +28,32 @@
                     <div class="col-sm-5">
                         <choose-quantity id="monthlyExpenses" tabindex="2" class="form-control-xs w-50" increment="100" decimals="2" currency="$" formControlName="monthlyExpenses" (change)="onChange()"></choose-quantity>
                     </div>
-                    <label for="monthlyExpenses" class="col-sm-6 col-form-label-xs small">How much do you think would be your monthly expenses in retirement.</label>
-                </div> 
+                    <label for="monthlyExpenses" class="col-sm-6 col-form-label-xs small">How much do you think would be your monthly expenses in today's money.</label>
+                </div>
             </div>
             <br>
             <div class="card rounded bg-light">
                 <div class="row mb-4 mt-4 ms-2">
+                    <label for="inflationRate" class="col-sm-6 col-form-label-xs h5">Inflation rate:</label>
+                    <div class="col-sm-5">
+                        <choose-quantity id="inflationRate" tabindex="3" class="form-control-xs w-50" minValue="0" increment=".1" decimals="2" formControlName="inflationRate" (change)="onChange()"></choose-quantity>
+                    </div>
+                    <label for="inflationRate" class="col-sm-6 col-form-label-xs small">The rate we'll use to adjust your expenses over time.</label>
+                </div>
+                <div class="row mb-4 ms-2">
                     <label for="investmentRate" class="col-sm-6 col-form-label-xs h5">Investment rate of return:</label>
                     <div class="col-sm-5">
                         <choose-quantity id="investmentRate" tabindex="4" class="form-control-xs w-50" minValue="0" increment=".1" decimals="2" formControlName="investmentRate" (change)="onChange()"></choose-quantity>
                     </div>
                     <label for="investmentRate" class="col-sm-6 col-form-label-xs small">How much do you think your investment will grow?</label>
                 </div>
-                <div class="row mb-4 ms-2">
+            </div>
+            <br>
+            <div class="card rounded bg-light">
+                <div class="row mb-4 mt-4 ms-2">
                     <label for="currentAge" class="col-sm-6 col-form-label-xs h5">Your age:</label>
                     <div class="col-sm-5">
-                        <choose-quantity id="currentAge" tabindex="1" class="form-control-xs w-50" minValue="16" increment="1" decimals="0" formControlName="currentAge" (change)="onChange()"></choose-quantity>
+                        <choose-quantity id="currentAge" tabindex="5" class="form-control-xs w-50" minValue="16" increment="1" decimals="0" formControlName="currentAge" (change)="onChange()"></choose-quantity>
                     </div>
                     <label for="currentAge" class="col-sm-6 col-form-label-xs small"></label>
                 </div>
@@ -68,13 +78,19 @@
                 </div>
             </div>
             <div class="row mb-2 mt-4 ms-2">
+                <label for="inflationRate" class="col-sm-3 col-form-label-xs h6">Inflation rate:</label>
+                <div class="col-sm-3">
+                    <choose-quantity id="inflationRate" isReadOnly="{{ readOnly }}" tabindex="3" class="form-control-xs w-50" minValue="0" increment=".1" decimals="2" formControlName="inflationRate" (change)="onChange()"></choose-quantity>
+                </div>
                 <label for="investmentRate" class="col-sm-3 col-form-label-xs h6">Interest rate:</label>
                 <div class="col-sm-3">
                     <choose-quantity id="investmentRate" isReadOnly="{{ readOnly }}" tabindex="4" class="form-control-xs w-50" minValue="0" increment=".1" decimals="2" formControlName="investmentRate" (change)="onChange()"></choose-quantity>
                 </div>
+            </div>
+            <div class="row mb-2 mt-4 ms-2">
                 <label for="currentAge" class="col-sm-3 col-form-label-xs h6">Your age:</label>
                 <div class="col-sm-3">
-                    <choose-quantity id="currentAge" isReadOnly="{{ readOnly }}" tabindex="3" class="form-control-xs w-50" minValue="0" increment="1" decimals="0" formControlName="currentAge" (change)="onChange()"></choose-quantity>
+                    <choose-quantity id="currentAge" isReadOnly="{{ readOnly }}" tabindex="5" class="form-control-xs w-50" minValue="0" increment="1" decimals="0" formControlName="currentAge" (change)="onChange()"></choose-quantity>
                 </div>
             </div>
         </div>
@@ -89,21 +105,50 @@
         </div>
     </div>
 
-    <div class="row mb-4" style="height: 400px">
+    <hr>
+    <h2>{{ !showAsset ? "Income vs Spending" : "Portfolio Growth" }}</h2>
+
+    <div *ngIf="!showAsset" class="row mb-4" style="height: 400px">
         <canvas baseChart class="chart"
-            [data]="barChartData"
-            [options]="barChartOptions(minY, maxX)"
-            [plugins]="barChartPlugins"
-            [type]="barChartType">
+            [data]="lineChartData"
+            [options]="lineChartOptions(minY, maxX)"
+            [plugins]="chartPlugins"
+            [type]="lineChartType">
         </canvas>
     </div>
 
-    <hr *ngIf="!disableTable">
+    <div *ngIf="showAsset" class="row mb-4" style="height: 400px">
+        <canvas baseChart class="chart"
+            [data]="barChartData"
+            [options]="barChartOptions(minY, maxX)"
+            [plugins]="chartPlugins"
+            [type]="barChartType">
+        </canvas>
+    </div>
+    
+    <div style="float: right">
+        <button type="button" (click)="toggleChart()">Show {{ !showAsset ? "Portfolio Growth" : "Income vs Spending" }}</button>
+    </div>
     <button *ngIf="!disableTable" type="button" (click)="generateAndShowTable()">See table</button>
     
     <div *ngIf="showTable">
     
-        <table class="table table-striped">
+        <table *ngIf="!showAsset" class="table table-striped">
+            <thead>
+            <tr>           
+                <th>Years</th>
+                <th>Total Income</th>
+                <th>Total Expenses</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let row of tableDataRows">           
+                <td *ngFor="let col of row | key">{{row[col]}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <table *ngIf="showAsset" class="table table-striped">
             <thead>
             <tr>           
                 <th>Years</th>
@@ -119,4 +164,5 @@
         </table>
     
     </div>
+
 </div>
