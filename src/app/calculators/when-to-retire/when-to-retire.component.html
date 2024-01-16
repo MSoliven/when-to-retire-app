@@ -127,7 +127,7 @@
     </div>
     
     <div style="float: right">
-        <button type="button" (click)="toggleChart()">Show {{ !showAsset ? "Portfolio Growth" : "Income vs Spending" }}</button>
+        <button type="button" (click)="toggleChart()">Show {{ !showAsset ? "Growth" : "Income" }}</button>
     </div>
     <button *ngIf="!disableTable" type="button" (click)="generateAndShowTable()">See table</button>
     
