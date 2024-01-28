@@ -281,8 +281,9 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
 
           growth = calcGrowth(balance, investmentRate);
           balance += growth + contribs;    
+          expensePerYear += calcGrowth(expensePerYear, inflationRate);
           potentialIncome = calcRetireIncome(balance);
-
+ 
           totalContribs += contribs; 
           contribs = 0;        
 
@@ -300,7 +301,6 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
             this.maxX = i;
             break;
           }
-          expensePerYear += calcGrowth(expensePerYear, inflationRate);
           targetPrincipal = calcFireNumber(expensePerYear)
         }
       }
