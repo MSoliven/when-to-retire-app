@@ -7,26 +7,23 @@
             <br><br>
             <div class="card rounded bg-light">
                 <div class="row mb-4 mt-4 ms-2">
-                    <label for="initialPrincipal" class="col-sm-6 col-form-label-xs h5">Current retirement savings:</label>
+                    <label for="initialPrincipal" class="col-sm-6 col-form-label-xs h5">Retirement savings:</label>
                     <div class="col-sm-5">
-                        <choose-quantity id="initialPrincipal" tabindex="1" class="form-control-xs w-50" increment="1000" decimals="2" currency="$" formControlName="initialPrincipal" (change)="onChange()"></choose-quantity>
+                        <choose-quantity id="initialPrincipal" tabindex="1" class="form-control-xs w-50" increment="1000" decimals="0" currency="$" formControlName="initialPrincipal" (change)="onChange()"></choose-quantity>
                     </div>
                     <label for="initialPrincipal" class="col-sm-6 col-form-label-xs small">The amount of money you have saved for retirement.</label>
                 </div>
-            </div>
-            <br>
-            <div class="card rounded bg-light">
-                <div class="row mb-4 mt-4 ms-2">
+                <div class="row mb-4 ms-2">
                     <label for="monthlyContribution" class="col-sm-6 col-form-label-xs h5">{{ periodContribLabel }} contribution:</label>
                     <div class="col-sm-5">
-                        <choose-quantity id="monthlyContribution" tabindex="2" class="form-control-xs w-50" increment="100" decimals="2" currency="$" formControlName="monthlyContribution" (change)="onChange()"></choose-quantity>
+                        <choose-quantity id="monthlyContribution" tabindex="2" class="form-control-xs w-50" increment="100" decimals="0" currency="$" formControlName="monthlyContribution" (change)="onChange()"></choose-quantity>
                     </div>
                     <label for="monthlyContribution" class="col-sm-6 col-form-label-xs small">The amount you plan to contribute towards retirement per month.</label>
                 </div>
-                <div class="row mb-4 mt-4 ms-2">
+                <div class="row mb-4 ms-2">
                     <label for="monthlyExpenses" class="col-sm-6 col-form-label-xs h5">{{ periodContribLabel }} expenses:</label>
                     <div class="col-sm-5">
-                        <choose-quantity id="monthlyExpenses" tabindex="2" class="form-control-xs w-50" increment="100" decimals="2" currency="$" formControlName="monthlyExpenses" (change)="onChange()"></choose-quantity>
+                        <choose-quantity id="monthlyExpenses" tabindex="2" class="form-control-xs w-50" increment="100" decimals="0" currency="$" formControlName="monthlyExpenses" (change)="onChange()"></choose-quantity>
                     </div>
                     <label for="monthlyExpenses" class="col-sm-6 col-form-label-xs small">How much do you think would be your monthly expenses in today's money.</label>
                 </div>
@@ -34,6 +31,13 @@
             <br>
             <div class="card rounded bg-light">
                 <div class="row mb-4 mt-4 ms-2">
+                    <label for="investmentRate" class="col-sm-6 col-form-label-xs h5">Investment rate of return:</label>
+                    <div class="col-sm-5">
+                        <choose-quantity id="investmentRate" tabindex="4" class="form-control-xs w-50" minValue="0" increment=".1" decimals="2" formControlName="investmentRate" (change)="onChange()"></choose-quantity>
+                    </div>
+                    <label for="investmentRate" class="col-sm-6 col-form-label-xs small">At what rate do you think your investments will grow?</label>
+                </div>
+                <div class="row mb-4 ms-2">
                     <label for="inflationRate" class="col-sm-6 col-form-label-xs h5">Inflation rate:</label>
                     <div class="col-sm-5">
                         <choose-quantity id="inflationRate" tabindex="3" class="form-control-xs w-50" minValue="0" increment=".1" decimals="2" formControlName="inflationRate" (change)="onChange()"></choose-quantity>
@@ -41,11 +45,11 @@
                     <label for="inflationRate" class="col-sm-6 col-form-label-xs small">The rate we'll use to adjust your contributions and expenses over time.</label>
                 </div>
                 <div class="row mb-4 ms-2">
-                    <label for="investmentRate" class="col-sm-6 col-form-label-xs h5">Investment rate of return:</label>
+                    <label for="safeWithdrawRate" class="col-sm-6 col-form-label-xs h5">Safe withdrawal rate:</label>
                     <div class="col-sm-5">
-                        <choose-quantity id="investmentRate" tabindex="4" class="form-control-xs w-50" minValue="0" increment=".1" decimals="2" formControlName="investmentRate" (change)="onChange()"></choose-quantity>
+                        <choose-quantity id="safeWithdrawRate" tabindex="3" class="form-control-xs w-50" minValue="0" increment=".1" decimals="2" formControlName="safeWithdrawRate" (change)="onChange()"></choose-quantity>
                     </div>
-                    <label for="investmentRate" class="col-sm-6 col-form-label-xs small">At what rate do you think your investments will grow?</label>
+                    <label for="safeWithdrawRate" class="col-sm-6 col-form-label-xs small">The rate you think you can safely withdraw per year.</label>
                 </div>
             </div>
             <br>
@@ -62,32 +66,36 @@
         </div>
         <div *ngIf="compact">
             <div class="row mb-2 mt-4 ms-2">
-                <label for="initialPrincipal" class="col-sm-3 col-form-label-xs h6">Current retirement savings:</label>
+                <label for="initialPrincipal" class="col-sm-3 col-form-label-xs h6">Retirement savings:</label>
                 <div class="col-sm-3">
-                    <choose-quantity id="initialPrincipal" isReadOnly="{{ readOnly }}" tabindex="1" class="form-control-xs w-50" minValue="0" increment="1000" decimals="2" currency="$" formControlName="initialPrincipal" (change)="onChange()"></choose-quantity>
+                    <choose-quantity id="initialPrincipal" isReadOnly="{{ readOnly }}" tabindex="1" class="form-control-xs w-50" minValue="0" increment="1000" decimals="0" currency="$" formControlName="initialPrincipal" (change)="onChange()"></choose-quantity>
                 </div>
             </div>
             <div class="row mb-2 mt-4 ms-2">
                 <label for="monthlyContribution" class="col-sm-3 col-form-label-xs h6">{{ periodContribLabel }} contribution:</label>
                 <div class="col-sm-3">
-                    <choose-quantity id="monthlyContribution" isReadOnly="{{ readOnly }}" tabindex="2" class="form-control-xs w-50" increment="100" decimals="2" currency="$" formControlName="monthlyContribution" (change)="onChange()"></choose-quantity>
+                    <choose-quantity id="monthlyContribution" isReadOnly="{{ readOnly }}" tabindex="2" class="form-control-xs w-50" increment="100" decimals="0" currency="$" formControlName="monthlyContribution" (change)="onChange()"></choose-quantity>
                 </div>
                 <label for="monthlyExpenses" class="col-sm-3 col-form-label-xs h6">{{ periodContribLabel }} expenses:</label>
                 <div class="col-sm-3">
-                    <choose-quantity id="monthlyExpenses" isReadOnly="{{ readOnly }}" tabindex="2" class="form-control-xs w-50" increment="100" decimals="2" currency="$" formControlName="monthlyExpenses" (change)="onChange()"></choose-quantity>
+                    <choose-quantity id="monthlyExpenses" isReadOnly="{{ readOnly }}" tabindex="2" class="form-control-xs w-50" increment="100" decimals="0" currency="$" formControlName="monthlyExpenses" (change)="onChange()"></choose-quantity>
                 </div>
             </div>
             <div class="row mb-2 mt-4 ms-2">
-                <label for="inflationRate" class="col-sm-3 col-form-label-xs h6">Inflation rate:</label>
-                <div class="col-sm-3">
-                    <choose-quantity id="inflationRate" isReadOnly="{{ readOnly }}" tabindex="3" class="form-control-xs w-50" minValue="0" increment=".1" decimals="2" formControlName="inflationRate" (change)="onChange()"></choose-quantity>
-                </div>
                 <label for="investmentRate" class="col-sm-3 col-form-label-xs h6">Interest rate:</label>
                 <div class="col-sm-3">
                     <choose-quantity id="investmentRate" isReadOnly="{{ readOnly }}" tabindex="4" class="form-control-xs w-50" minValue="0" increment=".1" decimals="2" formControlName="investmentRate" (change)="onChange()"></choose-quantity>
                 </div>
+                <label for="inflationRate" class="col-sm-3 col-form-label-xs h6">Inflation rate:</label>
+                <div class="col-sm-3">
+                    <choose-quantity id="inflationRate" isReadOnly="{{ readOnly }}" tabindex="3" class="form-control-xs w-50" minValue="0" increment=".1" decimals="2" formControlName="inflationRate" (change)="onChange()"></choose-quantity>
+                </div>
             </div>
             <div class="row mb-2 mt-4 ms-2">
+                <label for="safeWithdrawRate" class="col-sm-3 col-form-label-xs h6">Safe withdrawal rate:</label>
+                <div class="col-sm-3">
+                    <choose-quantity id="safeWithdrawRate" isReadOnly="{{ readOnly }}" tabindex="3" class="form-control-xs w-50" minValue="0" increment=".1" decimals="2" formControlName="safeWithdrawRate" (change)="onChange()"></choose-quantity>
+                </div>
                 <label for="currentAge" class="col-sm-3 col-form-label-xs h6">Your age:</label>
                 <div class="col-sm-3">
                     <choose-quantity id="currentAge" isReadOnly="{{ readOnly }}" tabindex="5" class="form-control-xs w-50" minValue="0" increment="1" decimals="0" formControlName="currentAge" (change)="onChange()"></choose-quantity>

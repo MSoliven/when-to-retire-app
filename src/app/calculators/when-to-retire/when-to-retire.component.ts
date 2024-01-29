@@ -141,10 +141,11 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
         let expenses = params["expenses"] as string;
         let inflate = params["inflate"] as string;
         let rate = params["rate"] as string;
+        let swr = params["swr"] as string;
         let age = params["age"] as string;
         let view = params["view"] as string;
         
-        this.onInitForm(initial, contrib, expenses, inflate, rate, age, view);
+        this.onInitForm(initial, contrib, expenses, inflate, rate, swr, age, view);
         this.onChange(true);
       }
     );
@@ -152,7 +153,7 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
 
   }
 
-  onInitForm(initial: string, contrib: string, expenses: string, inflate: string, rate: string, age: string, view: string) {
+  onInitForm(initial: string, contrib: string, expenses: string, inflate: string, rate: string, swr: string, age: string, view: string) {
 
     const getValue = (val: string, def: any) => {
       if (!val) return def;
@@ -189,11 +190,12 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
     }
 
     this.inputForm = this.fb.group({
-      initialPrincipal: [getValue(initial, "$100,000.00"), Validators.required],
-      monthlyContribution: [getValue(contrib, "$1000.00")],
-      monthlyExpenses: [getValue(expenses, "$5000.00")],
+      initialPrincipal: [getValue(initial, "$100,000"), Validators.required],
+      monthlyContribution: [getValue(contrib, "$1000")],
+      monthlyExpenses: [getValue(expenses, "$5000")],
       inflationRate: [getValue(inflate, "3")],
       investmentRate: [getValue(rate, "8")],
+      safeWithdrawRate: [getValue(swr, "4")],
       currentAge: [getValue(age, "30")],
       viewMode: [getValue(view, "")]
     });
@@ -206,7 +208,7 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
 
     if (!init && input.viewMode) {
       this.onInitForm(input.initialPrincipal, input.monthlyContribution, input.monthlyExpenses, input.inflationRate,
-        input.investmentRate, input.currentAge, input.viewMode);
+        input.investmentRate, input.safeWithdrawRate, input.currentAge, input.viewMode);
       input = this.inputForm.value;
     }
     
@@ -215,6 +217,7 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
     let expenses = FormatUtil.parseToNumber(input.monthlyExpenses);
     let inflate = FormatUtil.parseToNumber(input.inflationRate);
     let rate = FormatUtil.parseToNumber(input.investmentRate);
+    let swr = FormatUtil.parseToNumber(input.safeWithdrawRate);
     let age = FormatUtil.parseToNumber(input.currentAge);
 
     // reset retirement age
@@ -224,7 +227,7 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
       = this.calcLabels(input.currentAge as number);  
   
     this.barChartData.datasets = this.lineChartData.datasets 
-      = this.calcResultsets(principal, contrib, expenses, inflate, rate, age, input.viewMode);
+      = this.calcResultsets(principal, contrib, expenses, inflate, rate, swr, age, input.viewMode);
 
     this.chart?.update();
 
@@ -241,25 +244,25 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
     return labels;
   }
 
-  calcResultsets(initialPrincipal: number, contrib: number, expense: number, inflationRate: number, 
-    investmentRate: number, age: number, viewmode?: string): any {
+  calcResultsets(principal: number, contrib: number, expense: number, inflationRate: number, 
+    investmentRate: number, swr: number, age: number, viewmode?: string): any {
 
       let balances: number[] = [];
       let incomes: number[] = [];
       let contributions: number[] = [];
       let expenses: number[] = [];
-      let balance: number = initialPrincipal;
-      let totalContribs: number = initialPrincipal;
+      let balance: number = principal;
+      let totalContribs: number = principal;
       let growth: number;
       
       const calcRetireIncome = (balance: number): number => {
-        return balance * .04;
+        return balance * swr / 100;
       };
 
       const calcFireNumber = (expensePerYear: number): number => {
-        return expensePerYear * 25;
+        return expensePerYear * (1 / swr * 100);
       };
-
+ 
       const calcGrowth = (balance: number, compoundRate: number): number => {
         return balance * compoundRate / 100;
       };
@@ -267,7 +270,7 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
       let contribPerYear = contrib * 12;
       let expensePerYear = expense * 12;
       let targetPrincipal = calcFireNumber(expensePerYear);
-      let potentialIncome: number = calcRetireIncome(initialPrincipal);
+      let potentialIncome: number = calcRetireIncome(principal);
    
       for (let i = 0; i <= 80; i++) {
         if (i == 0) {
@@ -304,8 +307,8 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
 
       this.futureBalance = FormatUtil.formatNumber(balance);
 
-      if (balance < 0 || initialPrincipal < 0) {
-        this.minY = balance < initialPrincipal ? balance : initialPrincipal;
+      if (balance < 0 || principal < 0) {
+        this.minY = balance < principal ? balance : principal;
       }
       else {
         this.minY = 0;
