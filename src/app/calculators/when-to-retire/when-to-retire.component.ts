@@ -241,7 +241,7 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
     return labels;
   }
 
-  calcResultsets(initialPrincipal: number, regularContribs: number, expense: number, inflationRate: number, 
+  calcResultsets(initialPrincipal: number, contrib: number, expense: number, inflationRate: number, 
     investmentRate: number, age: number, viewmode?: string): any {
 
       let balances: number[] = [];
@@ -251,8 +251,7 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
       let balance: number = initialPrincipal;
       let totalContribs: number = initialPrincipal;
       let growth: number;
-      let contribs: number = 0;
-   
+      
       const calcRetireIncome = (balance: number): number => {
         return balance * .04;
       };
@@ -265,6 +264,7 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
         return balance * compoundRate / 100;
       };
 
+      let contribPerYear = contrib * 12;
       let expensePerYear = expense * 12;
       let targetPrincipal = calcFireNumber(expensePerYear);
       let potentialIncome: number = calcRetireIncome(initialPrincipal);
@@ -277,16 +277,13 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
           expenses.push(expensePerYear);     
         }
         else {
-          contribs += regularContribs * 12;
-
           growth = calcGrowth(balance, investmentRate);
-          balance += growth + contribs;    
+          contribPerYear += calcGrowth(contribPerYear, inflationRate);
           expensePerYear += calcGrowth(expensePerYear, inflationRate);
+          balance += growth + contribPerYear;    
           potentialIncome = calcRetireIncome(balance);
  
-          totalContribs += contribs; 
-          contribs = 0;        
-
+          totalContribs += contribPerYear; 
           
           balances.push(balance);
           incomes.push(potentialIncome);
