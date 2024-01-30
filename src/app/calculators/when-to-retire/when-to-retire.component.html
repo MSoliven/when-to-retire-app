@@ -105,11 +105,14 @@
     </form>
     <hr>
     <div class="row">
-        <div *ngIf="retireAge != -1" class="col-md-12 mx-auto">
+        <div *ngIf="retireAge > 0" class="col-md-12 mx-auto">
             <h4>You can quit at age {{ retireAge }} with a nest egg of {{ retireBalance }}. Your starting monthly income is {{ monthlyRetireIncome }} or {{ retireIncome }} yearly.</h4>
         </div>
         <div *ngIf="retireAge == -1" class="col-md-12 mx-auto">
             <h4>You won't be able to quit working. Try increasing your contribution or reduce your expenses.</h4>
+        </div>
+        <div *ngIf="retireAge == -2" class="col-md-12 mx-auto">
+            <h4>Why bother using this calculator? You can retire now with a monthly income of {{ monthlyRetireIncome }} or {{ retireIncome }} yearly.</h4>
         </div>
     </div>
 

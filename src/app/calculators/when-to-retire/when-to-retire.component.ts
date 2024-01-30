@@ -127,7 +127,6 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
   public futureBalance: string = "$0.00";
   public formattedAmount: string = "";
   
-  
   constructor(public override router: Router, public override route: ActivatedRoute, private fb: FormBuilder) { 
     super(router, route);
   }
@@ -267,6 +266,13 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
         return balance * compoundRate / 100;
       };
 
+      const processResults = (years: number): void => {
+        this.retireAge = age + years;
+        this.retireBalance = FormatUtil.formatNumber(balance, 0);
+        this.retireIncome = FormatUtil.formatNumber(calcRetireIncome(balance), 0);
+        this.monthlyRetireIncome = FormatUtil.formatNumber(calcRetireIncome(balance) / 12, 0);
+      };
+
       let contribPerYear = contrib * 12;
       let expensePerYear = expense * 12;
       let targetPrincipal = calcFireNumber(expensePerYear);
@@ -277,7 +283,14 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
           balances.push(balance);
           incomes.push(potentialIncome);
           contributions.push(totalContribs);
-          expenses.push(expensePerYear);     
+          expenses.push(expensePerYear);  
+          
+          if (balance > targetPrincipal) {
+            processResults(i);
+            this.retireAge = -2;
+            this.maxX = i;
+            break;
+          }
         }
         else {
           growth = calcGrowth(balance, investmentRate);
@@ -294,10 +307,7 @@ export class WhenToRetireComponent extends BaseComponent implements OnInit {
           expenses.push(expensePerYear);     
 
           if (this.retireAge == -1 && potentialIncome >= expensePerYear ) {
-            this.retireAge = age + i;
-            this.retireBalance = FormatUtil.formatNumber(balance, 0);
-            this.retireIncome = FormatUtil.formatNumber(calcRetireIncome(balance), 0);
-            this.monthlyRetireIncome = FormatUtil.formatNumber(calcRetireIncome(balance) / 12, 0);
+            processResults(i);
             this.maxX = i;
             break;
           }
